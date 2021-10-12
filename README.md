@@ -43,18 +43,18 @@ Sevicios Compartidos.
 
 A continuación se describen las variables más relevantes del archivo:
 
-  - idrph: identificador de persona
-  - glosa\_caenes: descripción de la actividad económica
-  - cod\_final: código caenes a dos dígitos
-  - origen: procedencia del etiquetado. Las categorías son ene y sscc
+  - *idrph*: identificador de persona
+  - *glosa\_caenes*: descripción de la actividad económica
+  - *cod\_final*: código caenes a dos dígitos
+  - *origen*: procedencia del etiquetado. Las categorías son ene y sscc
     (Servicios Compartidos)
-  - levantamiento: indica si el levantamiento fue mediante papel o
+  - *levantamiento*: indica si el levantamiento fue mediante papel o
     dispositivo electrónico. Las categorías son: papi y capi
-  - tiene\_auditoria: fue auditado por el equipo de Nomenclatura. Las
+  - *tiene\_auditoria*: fue auditado por el equipo de Nomenclatura. Las
     categorías son 0 y 1.
-  - tiene\_rev\_cruzada: el caso tuvo revisión cruzada. Las categorías
+  - *tiene\_rev\_cruzada*: el caso tuvo revisión cruzada. Las categorías
     son 0 y 1.
-  - variable: indica la pregunta del cuestionario de la cuál fue
+  - *variable*: indica la pregunta del cuestionario de la cuál fue
     obtenido el dato. Las categorías son c5, c9 y d5.
 
 Debido a que cada persona puede tener más de un registro, la manera de
@@ -79,18 +79,18 @@ a formar parte del dataset de entrenamiento.
 
 A continuación se describen las variables más relevantes del archivo:
 
-  - idrph: identificador de persona
-  - b1\_1: oficio
-  - b1\_2: tarea
-  - cod\_final: código asignado a 2 dígitos
-  - encuesta: ENE o piloto EPF
-  - origen: procedencia del etiquetado. Las categorías son ene y sscc
+  - *idrph*: identificador de persona
+  - *b1\_1*: oficio
+  - *b1\_2*: tarea
+  - *cod\_final*: código asignado a 2 dígitos
+  - *encuesta*: ENE o piloto EPF
+  - *origen*: procedencia del etiquetado. Las categorías son ene y sscc
     (Servicios Compartidos)
-  - levantamiento: indica si el levantamiento fue mediante papel o
+  - *levantamiento*: indica si el levantamiento fue mediante papel o
     dispositivo electrónico. Las categorías son: papi y capi
-  - tiene\_auditoria: fue auditado por el equipo de Nomenclatura. Las
+  - *tiene\_auditoria*: fue auditado por el equipo de Nomenclatura. Las
     categorías son 0 y 1.
-  - tiene\_rev\_cruzada: el caso tuvo revisión cruzada. Las categorías
+  - *tiene\_rev\_cruzada*: el caso tuvo revisión cruzada. Las categorías
     son 0 y 1.
 
 Debido a que cada persona puede tener más de un registro, la manera de

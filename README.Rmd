@@ -27,14 +27,14 @@ Cabe mencionar que de las tres fuentes de información, la más importante provi
 A continuación se describen las variables más relevantes del archivo:
 
 
-- idrph: identificador de persona
-- glosa_caenes: descripción de la actividad económica
-- cod_final: código caenes a dos dígitos
-- origen: procedencia del etiquetado. Las categorías son ene y sscc (Servicios Compartidos)
-- levantamiento: indica si el levantamiento fue mediante papel o dispositivo electrónico. Las categorías son: papi y capi
-- tiene_auditoria: fue auditado por el equipo de Nomenclatura.  Las categorías son 0 y 1.
-- tiene_rev_cruzada: el caso tuvo revisión cruzada.  Las categorías son 0 y 1.
-- variable: indica la pregunta del cuestionario de la cuál fue obtenido el dato. Las categorías son c5, c9 y d5.  
+- *idrph*: identificador de persona
+- *glosa_caenes*: descripción de la actividad económica
+- *cod_final*: código caenes a dos dígitos
+- *origen*: procedencia del etiquetado. Las categorías son ene y sscc (Servicios Compartidos)
+- *levantamiento*: indica si el levantamiento fue mediante papel o dispositivo electrónico. Las categorías son: papi y capi
+- *tiene_auditoria*: fue auditado por el equipo de Nomenclatura.  Las categorías son 0 y 1.
+- *tiene_rev_cruzada*: el caso tuvo revisión cruzada.  Las categorías son 0 y 1.
+- *variable*: indica la pregunta del cuestionario de la cuál fue obtenido el dato. Las categorías son c5, c9 y d5.  
 
 Debido a que cada persona puede tener más de un registro, la manera de generar un identificador único es mediante las columnas **idrph, mes y variable**.
 
@@ -47,15 +47,15 @@ La segunda fuente de etiquetado corresponde al control de calidad realizado por 
 
 A continuación se describen las variables más relevantes del archivo:
 
-- idrph: identificador de persona
-- b1_1: oficio
-- b1_2: tarea
-- cod_final: código asignado a 2 dígitos
-- encuesta: ENE o piloto EPF
-- origen: procedencia del etiquetado. Las categorías son ene y sscc (Servicios Compartidos)
-- levantamiento: indica si el levantamiento fue mediante papel o dispositivo electrónico. Las categorías son: papi y capi
-- tiene_auditoria: fue auditado por el equipo de Nomenclatura. Las categorías son 0 y 1.
-- tiene_rev_cruzada: el caso tuvo revisión cruzada. Las categorías son 0 y 1. 
+- *idrph*: identificador de persona
+- *b1_1*: oficio
+- *b1_2*: tarea
+- *cod_final*: código asignado a 2 dígitos
+- *encuesta*: ENE o piloto EPF
+- *origen*: procedencia del etiquetado. Las categorías son ene y sscc (Servicios Compartidos)
+- *levantamiento*: indica si el levantamiento fue mediante papel o dispositivo electrónico. Las categorías son: papi y capi
+- *tiene_auditoria*: fue auditado por el equipo de Nomenclatura. Las categorías son 0 y 1.
+- *tiene_rev_cruzada*: el caso tuvo revisión cruzada. Las categorías son 0 y 1. 
 
 Debido a que cada persona puede tener más de un registro, la manera de generar un identificador único es mediante las columnas **idrph, mes**.
 
