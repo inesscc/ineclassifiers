@@ -139,9 +139,21 @@ Con el objeto de alcanzar una codificación de alta calidad se implementó un si
 
 # Descripción de los modelos
 
-Durante el proceso de entrenamiento se re
+Durante el proceso de entrenamiento se llevó a cabo una serie de pruebas, con el objeto de encontrar el mejor modelo posible. A grandes rasgos, se hicieron ejercicios para 2 partes del entrenamiento: 1) metodología para convertir textos en vectores y 2) arquitectura del algoritmo para hacer el entrenamiento. Si bien existen otras partes del entrenamiento que pueden impactar en el resultado final, las 2 seleccionadas son las que probablemente tengan un mayor efecto. A raíz de ello, se priorizó por ellas.  
 
+## Metodología para vectorizar textos
 
+Para que los datos de texto sean procesados por cualquier algoritmo, se requiere que estos sean convertidos a algún tipo de representación numérica. Para llevar a cabo esta trasformación existen diferentes estrategias. Dos de las más importantes son *bag of words (BOW)* y *word embeddings*. En el caso de BOW es posible encontrar una serie de variantes, desde el enfoque más simple consistente en identificar la presencia o ausencia de una palabra, hasta representaciones más complejas, como tf-idf, que buscan ponderar las palabras de acuerdo a la importancia que estas tienen en un determinado corpus. La segunda vertiente, *word embeddings*, consiste en utilizar representaciones vectoriales de cada palabra, provenientes de un entrenamiento realizado con grandes volúmenes de texto. Usualmente, estos pro      
+
+En el marco de este trabajo se llevaron a cabo pruebas con ambos enfoques. 
+
+- Estrategia BOW: Dentro de la estrategia BOW se utilizaron 2 variantes. En primer lugar, se construyeron vectores utilizando tf-idf. Ello permite extraer de mejor manera el "significado" de cada palabra, que utilizando únicamente la presencia o ausencia. De este modo, un texto queda representado por un vector que tiene tantas dimensiones como palabras diferentes existan en el corpus. Dado que un texto por lo general contiene solo una pequeña fracción del total de palabras del vocabulario, el resultado corresponde a una matriz en la que la mayoría de sus elementos son 0. Típicamente, seguir esta metodología implica construir vectores con varios miles de dimensiones, lo cual supone un alto costo de procesamiento, pero dado que la mayor parte de los elementos son valores 0, es posible utilizar algunas estrategias para disminuir de manera importante el tiempo de ejecución. 
+
+La segunda variante utilizada en este trabajo consiste en asociar cada palabra diferente del corpus a un índice y luego representar cada texto como una secuencia de índices. Esto quiere decir que un texto con 5 palabras quedará representado por un vector de 5 dimensiones. Es importante mencionar que dado que no todos los textos tienen la misma cantidad de palabras, se debe recurrir a alguna estrategia para que todos los vectores tengan la misma cantidad de elementos. Para ello se utiliza un procedimiento denominado *padding*, que consiste en fijar un valor para el largo de los vectores y completar con ceros todos los vectores que tengan un número menor a dicho valor máximo.         
+
+Cabe señalar que en ambos enfoques de BOW la "semántica" de las palabras proviene de la información presente en el set de datos que se utiliza para el entrenamiento. En ese sentido, no se recurre a información externa, lo cual si ocurre en el enfoque basado en *word embeddings*. 
+
+- Estrategia *word embedding*: Como ya se ha mencionado, *word embeddings* es una manera de construir representaciones de palabras por medio de un proceso de aprendizaje basado en volúmnes muy grandes de texto. Así, una red neuronal es entrenada para predecir   
 
 # Modelos en producción
 
