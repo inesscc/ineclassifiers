@@ -139,6 +139,8 @@ Con el objeto de alcanzar una codificación de alta calidad se implementó un si
 
 # Descripción de los modelos
 
+Durante el proceso de entrenamiento se re
+
 
 
 # Modelos en producción
