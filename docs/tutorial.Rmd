@@ -10,19 +10,22 @@ knitr::opts_chunk$set(echo = TRUE, message = F, warning = F)
 
 ## Introducción
 
-La API para la codificación automática pone a disposición de los usuarios y usuarias modelos a uno y dos dígitos para actividad económica (CAENES) y ocupación (CIUO-08.CL). Los datos de entrenamiento provienen principalmente de la coyuntura de la Encuesta Nacional de Empleo, de modo que los modelos deberían ser utilizados para obtener predicciones de glosas cuya recolección tenga características similares a las utilizadas en el trabajo de campo de dicha encuesta. El etiquetado de datos fue realizado en el marco del proyecto Estratégico Servicios Compartidos para la Producción Estadística.   
+La API para la codificación automática pone a disposición de los usuarios y usuarias modelos a uno y dos dígitos para clasificar actividad económica (CAENES) y ocupación (CIUO-08.CL). Los datos de entrenamiento provienen principalmente de la coyuntura de la Encuesta Nacional de Empleo, de modo que los modelos deberían ser utilizados sobre glosas cuya recolección tenga características similares a las implementadas en el trabajo de campo de dicha encuesta. 
 
-En la presente viñeta se muestran algunos ejemplos para interactuar con la API de codificación automática mediante R y python. 
+El etiquetado de los datos y el entrenamiento de los modelos fueron realizados en el marco del Proyecto Estratégico Servicios Compartidos para la producción Estadística. Para mayor información acerca del proceso de etiquetado manual y de la arquitectura de los modelos, diríjase al documento "Codificación automática de clasificadores CIUO-08.CL y CAENES a partir de técnicas de *machine learning*. Creación de sets de entrenamiento y optimización de algoritmos". 
+
+En la presente viñeta se muestran algunos ejemplos para interactuar con la API de codificación automática mediante R y Python. Esta guía está orientada a usuarios y usuarias con un manejo intermedio de R y/o python y con conocimientos básicos de *machine learning*. Para una aproximación más formal a los métodos de la API, diríjase al siguiente sitio http://143.198.79.143:8080/__docs__/ (ESTA URL ES DE MI SERVIDOR. HAY QUE PONER LA URL CON IP INE)
 
 ## Predecir glosas individuales
 
-El *endpoint predict* permite obtener el código para una glosa. El parámetro más importante es *text*, donde debe indicarse la glosa para la cual se busca una predicción. Además, se debe precisar el clasificador (ciuo o caenes), así como la cantidad de dígitos (1 o 2). En caso de que no se especifiquen estos últimos 2 parámetros, los valores por defecto serán *caenes* y 2.     
+El *endpoint predict* permite obtener el código para una glosa. El parámetro más importante es *text*, donde debe indicarse la glosa para la cual se busca una predicción. Además, se debe precisar el clasificador (ciuo o caenes), así como la cantidad de dígitos (1 o 2). En caso de que no se especifiquen estos últimos 2 parámetros, los valores por defecto serán *caenes* y 2, respectivamente.     
 
-El paquete `httr` provee algunas herramientas para trabajar con el resultado del *request*. Mediante la función `status_code` es posible verificar el estatus de la operación (idealmente 200). Finalmente, con la función `content` se extrae el resultado de la consulta, consistente en un archivo json que indica la categoría predicha y la probabilidad asignada por el modelo a la predicción.   
+
+### Implementación en R 
+
+El paquete `httr` permite hacer solicitudes a un servidor de manera sencilla y provee algunas herramientas para manipular la respuesta. Mediante la función `POST` realizamos el *request*, entregando los parámetros para *text*, *classification* y *digits*. 
 
 ```{r}
-
-library(httr)
 glosa <- "manipulador de alimentos prepara colaciones"
 
 request <-  httr::POST("http://10.91.160.65:9292/predict", 
@@ -32,6 +35,12 @@ request <-  httr::POST("http://10.91.160.65:9292/predict",
                                     digits = 2)
 )
 
+```
+
+
+Para verificar el resultado utilizamos la función `status_code`, a traves de la cual es posible verificar el estatus de la operación (idealmente 200). Finalmente, con la función `content` se extrae el resultado de la consulta, consistente en un archivo json que indica la categoría predicha y la probabilidad asignada por el modelo a la predicción.   
+
+```{r}
 # Revisar el status
 httr::status_code(request)
 
@@ -40,33 +49,38 @@ response <- httr::content(request)
 response
 ```
 
-Para obtener el mismo resultado en python es posible utilizar la librería requests. En este caso los parámetros *text*, *classification* y *digits* se entregan mediante un diccionario a la función post.
+### Implementación en Python 
+
+Para obtener una predicción para actividad económica, pero ahora mediante python, es posible utilizar la librería *requests*. En este caso los parámetros *text*, *classification* y *digits* se entregan a través de un diccionario a la función post. Dado que estamos entregando una glosa de actividad económica, debemos utilizar el valor caenes. Indicaremos, además, que la clasificación debe ser a un dígito.  
 
 ```{python, eval = F}
 import requests
  
-url = "http://10.91.160.65:9292/predict"
-glosa = "gerente de producción dirige equipo"
+glosa = "producción uva exportación"
 
 data = {
     "text" : glosa,
-    "classification" : "ciuo",
-    "digits" : 2
+    "classification" : "caenes",
+    "digits" : 1
 }
  
-response = requests.post(url, json=data)
+response = requests.post("http://10.91.160.65:9292/predict", json=data)
 ```
 
 
 ## Predicción de conjunto de glosas
 
-Para predecir conjuntos de glosas, en lugar de textos individuales, se debe utilizar un procedimiento muy similar al anterior, pero ahora entregando un vector de *strings*. Para ello, se carga un archivo que contiene glosas de actividad económica y entregamos esa información en el parámetro *text*. En este caso, se utilizan las 10 primeras filas y se indica que la clasificación es CAENES a un dígito. 
+Para predecir conjuntos de glosas, en lugar de textos individuales, se debe utilizar un procedimiento muy similar al anterior, pero ahora entregando una lista de *strings*. Para ello, se carga un archivo que contiene glosas de actividad económica y entregamos esa información en el parámetro *text*. En este caso, se utilizan las 10 primeras filas y se indica que la clasificación es CAENES a un dígito. 
+
+### Implementación en R
 
 ```{r}
 library(feather)
-library(tidyverse)
+
+# Cargar los datos
 caenes <- read_feather("../src/data/split_train_test/test.feather")
 
+# Enviar la consulta al servidor
 request <-  httr::POST("http://10.91.160.65:9292/predict",
                        encode = "json",
                        body =  list(text = caenes$glosa_caenes[1:10],
@@ -77,36 +91,32 @@ request <-  httr::POST("http://10.91.160.65:9292/predict",
 # Extraer el contenido
 response <- httr::content(request)
 
-# Impimir las dos primeras predicciones
-tabla <- map(response[1:5], as.data.frame) %>%
-  bind_rows()
-
-tabla
 ```
 
+### Implementación en Python
 
-Para implementar la misma consulta en python, utilizamos el siguiente código.
+Para implementar la misma consulta anterior en python, utilizamos el siguiente código.
 
 ```{python, eval = F}
 
 import requests
 import pandas as pd
 
+# Cargar los datos
 caenes = pd.read_feather("../src/data/split_train_test/test.feather")
-glosa = list(caenes.glosa_caenes[0:10])
 
-url = "http://10.91.160.65:9292/predict"
-
+# Parámetros de la consulta
 data = {
-    "text" : glosa,
+    "text" : list(caenes.glosa_caenes[0:10]),
     "classification" : "ciuo",
     "digits" : 2
 }
- 
-response = requests.post(url, json=data)
- 
-print("Status Code", response.status_code)
-print("JSON Response ", response.json())
+
+# Enviar la consulta al servidor
+response = requests.post("http://10.91.160.65:9292/predict", json=data)
+
+# Extraer el contenido de la consulta 
+content = response.json()
 
 ```
 
