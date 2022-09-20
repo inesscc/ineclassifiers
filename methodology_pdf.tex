@@ -170,7 +170,7 @@ técnicas de aprendizaje de máquinas (\emph{machine learning}). El
 conocimiento acumulado y el desarrollo de competencias han permitido que
 estas técnicas sean aplicadas en la Encuesta Nacional de Empleo (ENE),
 en la Encuesta Nacional de Seguridad Ciudadana 2019 (ENUSC) y en la
-última Prueba Piloto de la Encuesta de Presupeustos Familiares
+última Prueba Piloto de la Encuesta de Presupuestos Familiares
 (realizada en 2020). En el caso de la ENE, desde marzo de 2019 se está
 implementando una metodología similar a la desarrollada por Guerrero y
 Cabezas (Cabezas, J. y Guerrero, J. 2019), quienes muestran resultados
@@ -185,8 +185,8 @@ para CAENES y CIUO-88.CL\footnote{CAENES corresponde al acrónimo de
   2016). Por su parte, CIUO-88 corresponde al acrónimo de Clasificador
   Internacional Uniforme de Ocupaciones. En el caso del documento citado
   de Guerrero y Cabezas (2019), se utilizan datos codificados con la
-  versión 88 del clasificador. Actualmente, el INE realiza sus
-  levantamientos con la versión 08.}. La posterior adaptación e
+  versión 88 del clasificador. Actualmente, el INE realiza su
+  codificación con la versión 08.CL.}. La posterior adaptación e
 implementación de dicha metodología se encuentra descrita en el
 documento ``Sistema de clasificación y codificación automática en la
 Encuesta Nacional de Empleo'' (INE 2019). En el caso de la Prueba Piloto
@@ -232,22 +232,31 @@ Todos estos cambios añaden dificultades a las estrategias de
 codificación basadas en técnicas de \emph{machine learning} e imponen la
 necesidad de monitorear constantemente los modelos que están en
 producción, con el objeto de introducir ajustes, en caso de que ello sea
-necesario. En ese sentido, el presente proyecto tiene como objetivo
-principal construir bases de entrenamiento actualizadas y optimizar
-algoritmos de codificación automatizada para los clasificadores CAENES y
-CIUO-08.CL. Dado que la institución se encuentra en un proceso de
-migración hacia dispositivos electrónicos de captura, es deseable contar
-con datos de entrenamiento que provengan de levantamientos con
-dispositivos de este tipo. El motivo de ello es que la manera en la que
-se registra la información en un dispositivo electrónico difiere del
-modo en que las personas lo hacen en un formato basado en papel, en
-términos de cantidad y tipo de palabras utilizadas. Es así que el
-presente proyecto pone a disposición dos sets de datos (CAENES y
-CIUO-08.CL) provenientes de levantamientos CAPI (\emph{Computer assisted
-personal interview}). En la elaboración de estos sets de entrenamiento,
-se han introducido altos estándares de exigencia, con el objeto de
-ofrecer datos de calidad, que permitan llevar a cabo próximos
-entrenamientos.
+necesario. En ese sentido, el proyecto que se sintetiza en el presente
+documento tuvo como propósito principal construir bases de entrenamiento
+actualizadas y optimizar algoritmos de codificación automatizada para
+los clasificadores CAENES y CIUO-08.CL. Dado que la institución se
+encuentra en un proceso de migración hacia dispositivos electrónicos de
+captura, es deseable contar con datos de entrenamiento que provengan de
+recolecciones con dispositivos de este tipo. El motivo de ello es que la
+manera en la que se registra la información en un dispositivo móvil de
+captura (DMC) difiere del modo en que las personas lo hacen en un
+formato basado en papel, en términos de cantidad y tipo de palabras
+utilizadas. Es así que al alero del proyecto se pusieron a disposición
+dos sets de datos (CAENES y CIUO-08.CL) provenientes de recolecciones
+CAPI (\emph{Computer assisted personal interview})
+\footnote{Datos comparativos entre diciembre de 2019 y enero de 2020  dan cuenta de que el número de palabras por glosa en actividad económica cayo de aproximadamente 7 a 5. Algo similar ocurre con el número de palabras diferentes, el cual cayó de 7.260 a 5.728 en el mismo periodo}.En
+la elaboración de estos sets de entrenamiento, se han introducido altos
+estándares de exigencia, con el objeto de ofrecer datos de calidad, que
+permitan llevar a cabo próximos entrenamientos.
+
+El presente documento tiene como objetivo principal documentar el
+proceso de creación de bases de datos de entrenamiento para CAENES y
+CIUO-08.CL, así como describir los principales procedimientos realizados
+durante la fase de entrenamiento de los modelos. Con esto se busca poner
+a disposición un material de apoyo, para quienes utilicen los datos y/o
+modelos generados en el marco del proyecto Estratégico Servicios
+Compartidos.
 
 Como objetivo secundario, este documento busca aportar a la incipiente
 diseminación respecto al desarrollo y uso de técnicas basadas en
@@ -260,13 +269,6 @@ entrenados de manera relativamente sencilla. Con esto último se busca
 que los esfuerzos realizados por este equipo puedan ser de utilidad para
 operaciones que tengan necesidades similares de codificación,
 contribuyendo a un uso más eficiente de los recursos públicos.
-
-El presente documento tiene como objetivo documentar el proceso de
-creación de bases de datos de entrenamiento para CAENES y CIUO-08.CL,
-así como describir los principales procedimientos realizados durante la
-fase de entrenamiento de los modelos. Con esto se busca poner a
-disposición un material de apoyo, para quienes utilicen los datos y/o
-modelos generados en el marco de este proyecto.
 
 \newpage
 
@@ -317,8 +319,8 @@ detalle los clasificadores leen cada uno de los textos y asignan un
 código conforme a criterios pre establecidos. Esta estrategia, por
 tanto, es intensiva en trabajo manual.
 
-Es posible identificar, al menos, 2 debilidades de una estrategia basada
-en codificación manual:
+Es posible identificar, al menos, tres debilidades de una estrategia
+basada en codificación manual:
 
 \begin{itemize}
 \item
@@ -326,7 +328,13 @@ en codificación manual:
   de los textos sea leído y luego codificado por una persona.
   Típicamente, una muestra tiene varios miles de registros, lo que
   implica que el trabajo manual destinado a esta tarea sea
-  significativo, generando tiempos de espera y costos en horas persona.
+  significativo, generando tiempos de espera durante el procesamiento
+  estadístico de los productos de la institución.
+\item
+  Es relevante considerar los elementos presupuestarios asociados a la
+  aplicación de esta técnica. Dado que la codificación manual es
+  intensiva en horas personas, su aplicación genera elevados costos para
+  las instituciones.
 \item
   El hecho de que la asignación de códigos descanse en las decisiones de
   distintas personas, hace complejo el aseguramiento de la aplicación de
@@ -337,7 +345,7 @@ en codificación manual:
   que se torne difícil la utilización de criterios rígidos.
 \end{itemize}
 
-A raíz de las dos situaciones mencionadas, es deseable la utilización de
+A raíz de las situaciones mencionadas, es deseable la utilización de
 estrategias automáticas de codificación, pues estas permiten disminuir
 significativamente las horas empleadas para dicha tarea y reducir el
 espacio para la discrecionalidad al momento de asignar un código.
@@ -385,7 +393,7 @@ cambios importantes, puede ser de gran utilidad un enfoque basado en
 \emph{machine learning}, ya que un mismo entrenamiento puede ser
 utilizado para muchas recolecciones. Por otro lado, operaciones
 estadísticas de naturaleza estructural, posiblemente, no se vean
-demasiado benefiadas por una estrategia de \emph{machine learning}, ya
+demasiado beneficiadas por una estrategia de \emph{machine learning}, ya
 que en periodos extensos de tiempo es muy problable que los
 clasificadores experimenten cambios relevantes, lo cual dejaría en
 obsolecencia los datos de entrenamiento.
@@ -434,32 +442,51 @@ podría originarse por varias causas. Algunas de las más importantes son:
   distancien de aquellos utilizados en el entrenamiento.
 \end{itemize}
 
-Si comienza a generarse una distancia considerable entre los datos de
-entrenamiento y aquellos para los que se pretende hacer una predicción,
-es posible que el rendimiento estimado inicialmente vaya disminuyendo
-progresivamente. Es deseable, entonces, contar con herramientas que
-permitan identificar cuándo la predicción del modelo comienza a
-disminuir. Ahora bien, la identificación de dicho punto no es trivial.
-La manera más sencilla, pero al mismo tiempo más costosa, es la revisión
-periódica de las predicciones del modelo por parte de personal altamente
-entrenado en el sistema de clasificación. Con ello se busca comparar la
-predicción del modelo con algo que en el contexto de \emph{machine
-learning} se suele llamar \emph{ground truth}, es decir, con una
-codificación considerada correcta. En este caso, se asume que los
-códigos asignados por una persona experta son la \emph{ground truth}. Si
-una estrategia como esta se realiza con la periodicidad adecuada, es
-posible identificar el momento en el cual la precisión del modelo
-comienza a disminuir. La limitación más importante es que se requiere
-contar con recursos humanos altamente especializados para esta tarea,
-sin embargo, es importante mencionar que dichos costos siempre son
-menores a los de codificar todos los registros manualmente.
+Si comienza a generarse una distancia considerable\footnote{Algunas
+  métricas para evaluar cambios en los datos son índice de estabilidad
+  de la población, divergencia Kullback--Leibler, divergencia
+  Jensen-Shannon, test de Kolmogorov-Smirnov, diferencia de densidad de
+  mínimos cuadrados. Dentro de estas medidas, algunas corresponden a
+  test de hipótesis, por ende, se evaluan respecto a su significancia.
+  En otros casos, se utilizan algunos valores de referencia. Para más
+  detalles, ver (Feldhans et~al. 2021) (Gama et~al. 2004) (Gama et~al.
+  2014).} entre los datos de entrenamiento y aquellos para los que se
+pretende hacer una predicción, es posible que el rendimiento estimado
+inicialmente vaya disminuyendo progresivamente (Feldhans et~al. 2021)
+(Gama et~al. 2004) (Gama et~al. 2014). Es deseable, entonces, contar con
+herramientas que permitan identificar cuándo la predicción del modelo
+comienza a disminuir. Ahora bien, la identificación de dicho punto no es
+trivial. La manera más sencilla, pero al mismo tiempo más costosa, es la
+revisión periódica de las predicciones del modelo por parte de personal
+altamente entrenado en el sistema de clasificación. Con ello se busca
+comparar la predicción del modelo con algo que en el contexto de
+\emph{machine learning} se suele llamar \emph{ground truth}, es decir,
+con una codificación considerada correcta. En este caso, se asume que
+los códigos asignados por una persona experta son la \emph{ground
+truth}. Si una estrategia como esta se realiza con la periodicidad
+adecuada, es posible identificar el momento en el cual la precisión del
+modelo comienza a disminuir. La limitación más importante es que se
+requiere contar con recursos humanos altamente especializados para esta
+tarea, sin embargo, es importante mencionar que dichos costos siempre
+son menores a los de codificar todos los registros manualmente.
 
-Una segunda alternativa sería implementar un sistema automatizado que
-genere una métrica que compare las características de los datos de
-entrenamiento con aquellos para los que se requiere una predicción. Esta
-métrica opera como un \emph{proxy} de precisión, lo cual permite
-moniteorear el rendimiento del modelo por medio de una variable que no
-es la precisión, pero que sí se relaciona con ella.
+Una segunda alternativa sería implementar un sistema automatizado que,
+sobre la base de una métrica, compare las características de los datos
+de entrenamiento con aquellos para los que se requiere una predicción.
+Esta tarea es conocida en la literatura como detección de deriva
+(\emph{drift detection}). Existen dos cambios que pueden impactar en el
+rendimiento de un modelo: cambios en la relación entre los predictores y
+la variable dependiente, es decir, en la probabilidad \(P(Y|X)\), o
+cambios en las variables explicativas \(P(X)\). Utilizando métodos
+estadísticos como Kolmogorov-Smirnov, índice de estabilidad de la
+población u otros, es posible identificar puntos de quiebre en la deriva
+de los datos que indiquen cuándo un modelo es probable que comience a
+deteriorarse. Por lo general con lo que se cuenta son las distribuciones
+de las variables independientes, respecto a las cuales es posible llevar
+a cabo algún tipo de monitoreo. El desafío más importante consiste en
+determinar si un cambio en las variables \(X\), efectivamente genera un
+efecto en las predicciones, pues cabe la posibilidad de que cambios en
+las variables X no generen problemas en la predicción.
 
 Independientemente de la estrategia para hacer el seguimiento del
 modelo, la acción esperada es una revisión del proceso de entrenamiento.
@@ -517,10 +544,11 @@ cada glosa. Cuando se producía una diferencia en el código asignado, un
 tercer analista más calificado, discernía cuál era el código final. Es
 importante mencionar que el porcentaje de doble codificación fue
 disminuyendo cuando se detectó que la cantidad de registros con
-discrepancias comenzó a decaer. La decisión de diminuir el porcentaje de
-doble codificación obedece a motivos de costos, ya que para cumplir con
-los objetivos del proyecto, se hizo necesario aumentar la velocidad de
-codificación.
+discrepancias comenzó a decaer
+\footnote{La disminución de doble codificación se realizó de manera uniforme para todas las categorías de los clasificadores, es decir, no se introdujo ningún criterio de priorización. La selección de registros para doble codificación fue aleatoria}.
+La decisión de diminuir el porcentaje de doble codificación obedece a
+motivos de costos, ya que para cumplir con los objetivos del proyecto,
+se hizo necesario aumentar la velocidad de codificación.
 
 Es relevante señalar que durante todo el proceso de codificación se
 contó con el apoyo de la Sección de Nomenclaturas, dependiente del
@@ -697,7 +725,7 @@ dentro de las recolecciones realizadas entre junio y octubre de 2020. El
 resultado de esta auditoría final muestra que los datos codificados por
 el equipo de Servicios Compartidos (SSCC) tienen una coincidencia de
 91,1\% respecto a lo señalado por la Sección de Nomenclaturas en el caso
-de CIUO y 92,5\%, en el caso de CAENES. Respecto a los registros
+de CIUO y 92,5\%, en el caso de CAENES.Respecto a los registros
 provenientes del control de calidad de la ENE, el porcentaje de acierto
 es menor: 77,6\% para CIUO y 58\% para CAENES. Esta situación es
 esperable y puede explicarse a raíz de dos situaciones. La primera de
@@ -705,20 +733,21 @@ ellas tiene que ver con que las glosas que llegan a la instancia de
 control de calidad de la ENE, lo hacen a causa de su dificultad mayor de
 codificación, por lo que es esperable que las discrepancias respecto de
 los criterios de la Sección de Nomenclaturas sean un poco más elevadas
-que para el resto de las glosas. Una segunda explicación se relaciona
-con el objetivo de la codificación de la ENE. La ENE es una encuesta
-coyuntural y debe lograr un ajuste adecuado entre calidad y oportunidad
-en la entrega de información, mientras que la creación de bases de
-entrenamiento tiene un objetivo absolutamente centrado en la calidad y
-consistencia, contando con cierta holgura en términos de oportunidad. En
-ese sentido, la comparación entre los registros codificados por la ENE y
-aquellos provenientes del trabajo de Servicios Compartidos es meramente
-referencial y debe analizarse con cautela, ya que las características
-recién mencionadas introducen distorsiones que impiden una comparación
-directa. A raíz de esta situación, para el entrenamiento de los modelos
-se han utilizado únicamente los datos codificados por el equipo de
-Servicios Compartidos. En el siguiente apartado se volverá sobre este
-punto.
+que para el resto de las glosas.
+
+Una segunda explicación se relaciona con el objetivo de la codificación
+de la ENE. La ENE es una encuesta coyuntural y debe lograr un ajuste
+adecuado entre calidad y oportunidad en la entrega de información,
+mientras que la creación de bases de entrenamiento tiene un objetivo
+absolutamente centrado en la calidad y consistencia, contando con cierta
+holgura en términos de oportunidad. En ese sentido, la comparación entre
+los registros codificados por la ENE y aquellos provenientes del trabajo
+de Servicios Compartidos es meramente referencial y debe analizarse con
+cautela, ya que las características recién mencionadas introducen
+distorsiones que impiden una comparación directa. A raíz de esta
+situación, para el entrenamiento de los modelos se han utilizado
+únicamente los datos codificados por el equipo de Servicios Compartidos.
+En el siguiente apartado se volverá sobre este punto.
 
 \begin{table}[H]
 
@@ -788,7 +817,7 @@ datos de la coyuntura ENE del año 2018, con el objetivo de aumentar
 algunas categorías con poca prevalencia. Es importante mencionar que, a
 diferencia de los demás registros, estos no corresponden a una
 recolección realizada por medio de dispositivos móviles, lo cual se
-indica en el dataset, por medio de la variable \emph{levantamiento}.
+indica en el dataset, por medio de la variable \emph{metodo\_captura}.
 
 Cabe mencionar que de las tres fuentes de información, la que aporta
 mayor número de registros proviene del etiquetado realizado por el
@@ -810,7 +839,7 @@ utilizado:
   \textbf{origen}: procedencia del etiquetado. Las categorías son ene y
   sscc (Servicios Compartidos).
 \item
-  \textbf{levantamiento}: indica si el levantamiento fue mediante papel
+  \textbf{metodo\_captura}: indica si la recolección fue mediante papel
   o dispositivo electrónico. Las categorías son papi y capi.
 \item
   \textbf{tiene\_auditoria}: fue auditado por la sección de
@@ -820,7 +849,8 @@ utilizado:
   categorías son 0 y 1.
 \item
   \textbf{variable}: indica la pregunta del cuestionario de la cual fue
-  obtenido el dato. Las categorías son c5, c9 y d5.
+  obtenido el dato. Las categorías son c5, c9 y d5
+  \footnote{Otras variables disponibles son mes, comuna, region y nivel educativo}.
 \end{itemize}
 
 Debido a que cada persona puede tener más de un registro, la manera de
@@ -864,14 +894,15 @@ utilizado:
   \textbf{origen}: procedencia del etiquetado. Las categorías son ene y
   sscc (Servicios Compartidos).
 \item
-  \textbf{levantamiento}: indica si el levantamiento fue mediante papel
+  \textbf{metodo\_captura}: indica si la recolección fue mediante papel
   o dispositivo electrónico. Las categorías son PAPI y CAPI.
 \item
   \textbf{tiene\_auditoria}: fue auditado por la Sección de
   Nomenclatura. Las categorías son 0 y 1.
 \item
   \textbf{tiene\_rev\_cruzada}: el caso tuvo revisión cruzada. Las
-  categorías son 0 y 1.
+  categorías son 0 y 1
+  \footnote{Otras variables disponibles son mes, comuna, region y nivel educativo}.
 \end{itemize}
 
 Debido a que cada persona puede tener más de un registro, la manera de
@@ -933,7 +964,7 @@ incidencia de 1,1\% respecto al total.
 \centering
 \large
 \caption{Distribución de códigos CAENES (2 dígitos)}
-\label{ciuo_distancia}
+\label{caenes_distancia}
 \includegraphics[width = \linewidth]{imagenes/distribucion_caenes.pdf}
 \normalsize
 \end{figure}
@@ -971,14 +1002,18 @@ provenientes de recolección de CAPI y PAPI. Tal como se señala en uno de
 los apartados iniciales, una preocupación a lo largo de este trabajo ha
 sido elaborar conjuntos de entrenamiento que consideren datos generados
 a partir de dispositivos móviles. En ese sentido, cerca de un 100\%
-corresponde a levantamientos via tablet, pero dado que algunas
-categorías presentaban una escasa presencia, se tomó la decisión de
-incorporar algunas glosas del levantamiento de 2018, de modo de abultar
-dichas categorías y mejorar el proceso de entrenamiento.
+corresponde a recolección via tablet, pero dado que algunas categorías
+presentaban una escasa presencia, se tomó la decisión de incorporar
+algunas glosas de recolecciones de 2018, de modo de abultar dichas
+categorías y mejorar el proceso de entrenamiento. El motivo por el cual
+no se utilizaron glosas más actuales radica en que era necesario contar
+con registros codificados manualmente y dado que desde 2019 la
+codificación en la Encuesta Nacional de Empleo se realiza mediante un
+modelo, fue necesario buscar datos de 2018.
 
 \begin{table}[H]
 
-\caption{\label{tab:unnamed-chunk-1}\label{capi_papi}Procedencia CAPI y PAPI}
+\caption{\label{tab:procedencia_capi_papi_caenes}\label{capi_papi}Procedencia CAPI y PAPI}
 \centering
 \fontsize{9.5}{11.5}\selectfont
 \begin{tabular}[t]{ccc}
@@ -1032,15 +1067,17 @@ Proyecto Estratégico Servicios Compartidos.
 
 \caption{\label{tab:crear tabla origen ciuo}\label{origen_ciuo}Origen de la codificación CIUO-08.CL}
 \centering
-\begin{tabu} to \linewidth {>{\raggedright}X>{\raggedright}X>{\raggedright}X}
+\fontsize{9.5}{11.5}\selectfont
+\begin{tabular}[t]{lll}
 \toprule
 origen & frecuencia & porcentaje\\
 \midrule
 ene & 12.250 & 36,2\\
 sscc & 21.573 & 63,8\\
 \bottomrule
-\multicolumn{3}{l}{\rule{0pt}{1em}Fuente: elaboración propia, Instituto Nacional de Estadísticas }\\
-\end{tabu}
+\multicolumn{3}{l}{\rule{0pt}{1em}Fuente: elaboración propia}\\
+\multicolumn{3}{l}{\rule{0pt}{1em}Instituto Nacional de Estadísticas}\\
+\end{tabular}
 \end{table}
 
 El siguiente gráfico muestra la distribución de la variable CIUO a dos
@@ -1052,7 +1089,7 @@ adecuada a dos dígitos. La categoría 999 corresponde al 0,4\% del total.
 \centering
 \large
 \caption{Distribución de códigos CIUO-08.CL (2 dígitos)}
-\label{ciuo_distancia}
+\label{distribucion_ciuo}
 \includegraphics[width = \linewidth]{imagenes/distribucion_ciuo.pdf}
 \normalsize
 \end{figure}
@@ -1091,19 +1128,16 @@ Durante el proceso de entrenamiento se llevó a cabo una serie de
 pruebas, con el objeto de encontrar el mejor modelo posible. A grandes
 rasgos, se utilizaron variantes para 2 partes del entrenamiento: 1)
 metodología para convertir textos en vectores y 2) arquitectura del
-algoritmo para hacer el entrenamiento. Si bien existen otras partes del
-entrenamiento que pueden impactar en el resultado final, las 2
-seleccionadas son las que probablemente tengan un mayor efecto. A raíz
-de ello, se priorizó por ellas.
+algoritmo para hacer el entrenamiento.
 
 \hypertarget{metodologuxeda-para-vectorizar-textos}{%
-\subsection{Metodología para vectorizar
-textos}\label{metodologuxeda-para-vectorizar-textos}}
+\subsection{\texorpdfstring{Metodología para vectorizar textos
+\label{introduction}}{Metodología para vectorizar textos }}\label{metodologuxeda-para-vectorizar-textos}}
 
 Para que los datos de texto sean procesados por cualquier algoritmo, se
 requiere que estos sean convertidos a algún tipo de representación
 numérica. Para llevar a cabo esta trasformación existen diferentes
-estrategias. Dos de las más importantes son \emph{bag of words (BOW)} y
+estrategias. Dos de las más importantes son \emph{bag of words} (BOW) y
 \emph{word embeddings}. En el caso de BOW es posible encontrar una serie
 de variantes, desde el enfoque más simple consistente en identificar la
 presencia o ausencia de una palabra, hasta representaciones más
@@ -1130,67 +1164,25 @@ En el marco de este trabajo se llevaron a cabo pruebas con ambos
 enfoques.
 
 \begin{itemize}
-\tightlist
-\item
-  Estrategia BOW: Dentro de la estrategia BOW se utilizaron 2 variantes.
-  En primer lugar, se construyeron vectores utilizando tf-idf. Ello
-  permite extraer de mejor manera el ``significado'' de cada palabra,
-  que utilizando únicamente la presencia o ausencia. De este modo, un
-  texto queda representado por un vector que tiene tantas dimensiones
-  como palabras diferentes existan en el corpus. Dado que un texto por
-  lo general contiene solo una pequeña fracción del total de palabras
-  del vocabulario, el resultado corresponde a una matriz en la que la
-  mayoría de sus elementos es 0. Típicamente, seguir esta metodología
-  implica construir vectores con varios miles de dimensiones, lo cual
-  supone un alto costo de procesamiento, pero dado que la mayor parte de
-  los elementos corresponde a valores 0, es posible utilizar algunas
-  estrategias para disminuir de manera importante el tiempo de
-  ejecución.
+
+  \item Estrategia BOW: Dentro de la estrategia BOW se utilizaron 2 variantes. En primer lugar, se construyeron vectores utilizando tf-idf. Ello permite extraer de mejor manera el "significado" de cada palabra, que utilizando únicamente la presencia o ausencia. La metodología TF-IDF está compuesta por 2 términos. El primero de ellos (TF) describe un texto a partir de las frecuencias de las palabras que este contiene. Usualmente, estas frecuencias se ponderan de alguna manera para evitar sesgos hacia documentos muy largos. La intuición que está detrás es que si una palabra aparece muchas veces en un texto, implica que aporta información relevante para describirlo. El segundo componente (IDF) es una medida de cuán común es una palabra dentro de todo el corpus. Si una palabra es muy frecuente tendrá un puntaje bajo, ya que no permite discriminar entre un texto y otro. Al contrario, si tiene pocas apariciones a lo largo de los textos, tendrá un puntaje alto. Para llegar a una medida sintética, se multiplican ambos términos (TF*IDF). 
+\newline
+\newline De este modo, un texto queda representado por un vector que tiene tantas dimensiones como palabras diferentes existan en el corpus \footnote{ Si el corpus está compuesto por 10.000 *tokens* (usualmente, palabras o bigramas) diferentes, cada texto estará compuesto por un vector de 10.000 dimensiones.}. Dado que un texto por lo general contiene solo una pequeña fracción del total de palabras del vocabulario, el resultado corresponde a una matriz en la que la mayoría de sus elementos es 0. Típicamente, seguir esta metodología implica construir vectores con varios miles de dimensiones, lo cual supone un alto costo de procesamiento, pero dado que la mayor parte de los elementos corresponde a valores 0, es posible utilizar algunas estrategias para disminuir de manera importante el tiempo de ejecución. 
+\newline
+\newline La segunda variante de BOW utilizada en este trabajo consiste en asociar cada palabra diferente del corpus a un índice y luego representar cada texto como una secuencia de índices. Esto quiere decir que un texto con 5 palabras quedará representado por un vector de 5 dimensiones. Es importante mencionar que dado que los textos no tienen la misma cantidad de palabras, en el caso de una red \textit{feed-forward}, se debe recurrir a alguna estrategia para que todos los vectores terminen con la misma cantidad de elementos. Para ello, se utiliza un procedimiento denominado \textit{padding}, que consiste en fijar un valor para el largo de los vectores y completar con ceros todos los vectores que tengan un número menor a dicho valor máximo. En el caso de una red neuronal recurrente este procedimiento no es necesario, ya que dicha arquitectura está diseñada para recibir entradas de largo diferente.          
+\newline
+\newline Cabe señalar que en ambos enfoques de BOW la "semántica" de las palabras proviene de la información presente en el set de datos que se utiliza para el entrenamiento. En ese sentido, no se recurre a información externa, lo cual sí ocurre en el enfoque basado en \textit{word embeddings}. 
+
+  \item Estrategia \textit{word embedding}: como ya se ha mencionado, \textit{word embeddings} es una manera de construir representaciones de palabras por medio de un proceso de aprendizaje en el cual se utilizan grandes volúmenes de texto. Así, una red neuronal es entrenada para que, a partir de una palabra, sea predicho el contexto de la misma o, inversamente, el entrenamiento puede realizarse para que a partir de un contexto, se prediga una palabra. Cuando este proceso se hace con una cantidad de datos suficientes, es posible que la red "aprenda" representaciones de las palabras que capturan su semántica. En el marco de este trabajo se utilizó un modelo entrenado por \href{https://github.com/dccuchile/spanish-word-embeddings/blob/master/emb-from-suc.md}{\color{blue}{Jorge Pérez y José Cañete}}. El modelo contiene vectores de 300 dimensiones y su entrenamiento se hizo mediante el algoritmo FastText  
 \end{itemize}
-
-La segunda variante de BOW utilizada en este trabajo consiste en asociar
-cada palabra diferente del corpus a un índice y luego representar cada
-texto como una secuencia de índices. Esto quiere decir que un texto con
-5 palabras quedará representado por un vector de 5 dimensiones. Es
-importante mencionar que dado que los textos no tienen la misma cantidad
-de palabras, se debe recurrir a alguna estrategia para que todos los
-vectores terminen con la misma cantidad de elementos. Para ello, se
-utiliza un procedimiento denominado \emph{padding}, que consiste en
-fijar un valor para el largo de los vectores y completar con ceros todos
-los vectores que tengan un número menor a dicho valor máximo.
-
-Cabe señalar que en ambos enfoques de BOW la ``semántica'' de las
-palabras proviene de la información presente en el set de datos que se
-utiliza para el entrenamiento. En ese sentido, no se recurre a
-información externa, lo cual si ocurre en el enfoque basado en
-\emph{word embeddings}.
-
-\begin{itemize}
-\tightlist
-\item
-  Estrategia \emph{word embedding}: como ya se ha mencionado, \emph{word
-  embeddings} es una manera de construir representaciones de palabras
-  por medio de un proceso de aprendizaje en el cual se utilizan grandes
-  volúmenes de texto. Así, una red neuronal es entrenada para que, a
-  partir de una palabra, sea predicho el contexto de la misma o,
-  inversamente, el entrenamiento puede realizarse para que a partir de
-  un contexto, se prediga una palabra. Cuando este proceso se hace con
-  una cantidad de datos suficientes, es posible que la red ``aprenda''
-  representaciones de las palabras que capturan su semántica.
-\end{itemize}
-
-En el marco de este trabajo se utilizó un modelo entrenado por
-\href{https://github.com/dccuchile/spanish-word-embeddings/blob/master/emb-from-suc.md}{Jorge
-Perez}. El modelo contiene vectores de 300 dimensiones y su
-entrenamiento se hizo mediante el algoritmo FastText.
 
 \hypertarget{arquitecturas-probadas}{%
 \subsection{Arquitecturas probadas}\label{arquitecturas-probadas}}
 
 Durante la etapa de pruebas, se llevaron a cabo ejercicios con 2
 arquitecturas de redes neuronales. Dichas arquitecturas se probaron con
-las dos estrategias de vectorización mencioandas más arriba, a partir de
-lo cual se originan 4 modelos diferentes.
+las dos estrategias de vectorización mencionadas en la sección
+\ref{introduction}, a partir de lo cual se originan 4 modelos.
 
 Las arquitecturas consideradas fueron \emph{feed-forward} y \emph{gated
 recurrent unit} (GRU). La arquitectura de red \emph{feed-forward} es la
@@ -1207,7 +1199,7 @@ traspasada hacia los estados posteriores, combatiendo el problema de la
 ``falta de memoria'' de largo plazo. En ese sentido, la arquitectura GRU
 es sumamente útil para procesar datos de texto, ya que el lenguaje
 humano puede ser entendido como una secuencia de elementos concatenados,
-en los que cierto orden genera sentido.
+cuyo orden genera sentido.
 
 \hypertarget{resultados-del-entrenamiento}{%
 \subsubsection{Resultados del
@@ -1229,14 +1221,15 @@ distintas estrategias elegidas, sin embargo, vale la pena mencionar que
 tanto a uno como a dos dígitos, la vectorización mediante secuencias
 (seq\_1d y seq\_2d) muestra un desempeño ligeramente más alto que los
 demás modelos. Esto se debe a que en la extracción de características
-para esa estrategia, se utilizó la información de la variable CISE, lo
-cual no tiene demasiado sentido en un modelo que incorpore \emph{word
+para esa estrategia, se utilizó la información de la variable
+CISE\footnote{Clasificación internacional de situación en el empleo.},
+lo cual no tiene demasiado sentido en un modelo que incorpore \emph{word
 embeddings}, puesto que habría supuesto encontrar representaciones
 vectoriales para las categorías de CISE, cuyo significado está definido
 específicamente para la variable en cuestión\footnote{La variable CISE
   está conformada por categorías numéricas que tienen sentido en el
   contexto específico de dicha variable. Por ejemplo, el caracter ``1''
-  tiene unsignificado muy particular, pues está asociado a los
+  tiene un significado muy particular, pues está asociado a los
   empleadores. Ahora bien, dado que el modelo de \emph{embeddings}
   contiene el ``significado general'' de ``1'', el vector asignado a ese
   caracter no apuntará en una dirección similar a la que ``1'' tiene
@@ -1245,36 +1238,52 @@ basado en \emph{word embeddings} sea utilizado de manera productiva, ya
 que el hecho de enriquecer la descripción de los textos mediante un
 modelo entrenado con grandes cantidades de texto, hace suponer que las
 predicciones sean menos sensibles a cambios en la manera de registrar la
-información.\footnote{Para mayores detalles sobre la construcción de
-  \emph{word embeddings}, ver el trabajo de Jorge Perez Rojas
-  {[}\url{https://github.com/dccuchile/spanish-word-embeddings}{]}}
+información\footnote{Para mayores detalles sobre la construcción de
+  \emph{word embeddings}, ver el trabajo de {[}Jorge Perez y Jorge
+  Cañete{]}
+  Rojas{]}(\url{https://github.com/dccuchile/spanish-word-embeddings})}
+(Perez, J y Cañete, J 2016).
+
 Adicionalmente, es relevante mencionar que un modelo que utilice
 únicamente la información contenida en la glosa es más deseable que uno
 que contenga variable auxiliares, ya que ello hace posible que sea
 utilizado en un mayor número de situaciones. La razón es que las
 preguntas de ocupación y actividad económica tienen un nivel elevado de
 estandarización a través de las distintas encuestas de hogares dentro
-del INE. Al contrario, las variables auxiliares que acompañan a las
-glosas dependen de los objetivos particulares de cada estudio y no
-siempre están presentes en todos los cuestionarios.
+del INE. Al contrario, las preguntas auxiliares que acompañan a las
+glosas, como nivel educativo, nombre de la empresa, situación en el
+empleo u otras, dependen de los objetivos particulares de cada estudio y
+no siempre están presentes en todos los cuestionarios. Debe señalarse
+que la decisión de desarrollar un modelo con pocas variables introduce
+una limitación, ya que en ciertos casos el modelo no contará con la
+información suficiente para asignar el código correcto\footnote{Un
+  ejemplo de esta situación son las enfermeras y enfermeros que no
+  declaran explícitamente en su oficio o en sus tareas el nivel
+  educacional. Así, una ocupación quedará codificada en el gran grupo 2,
+  si su nivel educacional es profesional y en el gran grupo 3, si su
+  nivel es técnico.}, lo cual podría introducir algunas distorsiones
+para glosas que no cuentan con información completa.
 
-En el caso de CIUO es un poco más evidente que el modelo que utiliza
-\emph{word embeddings} presenta un mejor rendimiento que los demás, por
-lo que, nuevamente, se sugiere que sea utilizado de manera productiva.
+De acuerdo a los datos de las tablas 9, 10, 11 y 12, en el caso de CIUO
+es un poco más evidente que el modelo que utiliza \emph{word embeddings}
+presenta un mejor rendimiento que los demás, ya que los 4 indicadores
+(\emph{accuracy}, \emph{macro-F1}, \emph{micro-F1} y \emph{weighted-F1})
+muestran valores superiores. Es por ello que, nuevamente, se sugiere que
+sea utilizado de manera productiva.
 
 \begin{table}[H]
 
-\caption{\label{tab:unnamed-chunk-2}Resultados CAENES 1 dígito}
+\caption{\label{tab:resultados_entrenamiento}Resultados CAENES 1 dígito}
 \centering
 \fontsize{9.5}{11.5}\selectfont
 \begin{tabular}[t]{lrrrr}
 \toprule
 modelo & acc & macro & micro & weighted\\
 \midrule
-seq\_1d & 0.9384 & 0.8757 & 0.9384 & 0.9386\\
-tfidf\_1d & 0.9327 & 0.8658 & 0.9327 & 0.9330\\
-emb\_simple\_1d & 0.9274 & 0.8641 & 0.9274 & 0.9280\\
-emb\_gru\_1d & 0.9327 & 0.8694 & 0.9327 & 0.9328\\
+secuencias feed-forward 1d & 0.9384 & 0.8757 & 0.9384 & 0.9386\\
+TF-IDF feed-forward 1d & 0.9327 & 0.8658 & 0.9327 & 0.9330\\
+embeddings feed-forward 1d & 0.9274 & 0.8641 & 0.9274 & 0.9280\\
+embeddings Gated Recurrent Unit 1d & 0.9327 & 0.8694 & 0.9327 & 0.9328\\
 \bottomrule
 \multicolumn{5}{l}{\rule{0pt}{1em}Fuente: elaboración propia, Instituto Nacional de Estadísticas }\\
 \end{tabular}
@@ -1282,17 +1291,17 @@ emb\_gru\_1d & 0.9327 & 0.8694 & 0.9327 & 0.9328\\
 
 \begin{table}[H]
 
-\caption{\label{tab:unnamed-chunk-2}Resultados CAENES 2 dígito}
+\caption{\label{tab:resultados_entrenamiento}Resultados CAENES 2 dígito}
 \centering
 \fontsize{9.5}{11.5}\selectfont
 \begin{tabular}[t]{lrrrr}
 \toprule
 modelo & acc & macro & micro & weighted\\
 \midrule
-seq\_2d & 0.9075 & 0.7536 & 0.9075 & 0.9083\\
-tfidf\_2d & 0.9076 & 0.7579 & 0.9076 & 0.9081\\
-emb\_simple\_2d & 0.9021 & 0.7631 & 0.9021 & 0.9039\\
-emb\_gru\_2d & 0.9048 & 0.7630 & 0.9048 & 0.9052\\
+secuencias feed-forward 2d & 0.9075 & 0.7536 & 0.9075 & 0.9083\\
+TF-IDF feed-forward 2d & 0.9076 & 0.7579 & 0.9076 & 0.9081\\
+embeddings feed-forward 2d & 0.9021 & 0.7631 & 0.9021 & 0.9039\\
+embeddings Gated Recurrent Unit 2d & 0.9048 & 0.7630 & 0.9048 & 0.9052\\
 \bottomrule
 \multicolumn{5}{l}{\rule{0pt}{1em}Fuente: elaboración propia, Instituto Nacional de Estadísticas }\\
 \end{tabular}
@@ -1300,17 +1309,17 @@ emb\_gru\_2d & 0.9048 & 0.7630 & 0.9048 & 0.9052\\
 
 \begin{table}[H]
 
-\caption{\label{tab:unnamed-chunk-2}Resultados CIUO 1 dígito}
+\caption{\label{tab:resultados_entrenamiento}Resultados CIUO 1 dígito}
 \centering
 \fontsize{9.5}{11.5}\selectfont
 \begin{tabular}[t]{lrrrr}
 \toprule
 modelo & acc & macro & micro & weighted\\
 \midrule
-seq\_1d & 0.8858 & 0.8599 & 0.8858 & 0.8855\\
-tfidf\_1d & 0.8684 & 0.8362 & 0.8684 & 0.8686\\
-emb\_simple\_1d & 0.8793 & 0.8519 & 0.8793 & 0.8807\\
-emb\_gru\_1d & 0.8989 & 0.8796 & 0.8989 & 0.8990\\
+secuencias feed-forward 1d & 0.8858 & 0.8599 & 0.8858 & 0.8855\\
+TF-IDF feed-forward 1d & 0.8684 & 0.8362 & 0.8684 & 0.8686\\
+embeddings feed-forward 1d & 0.8793 & 0.8519 & 0.8793 & 0.8807\\
+embeddings Gated Recurrent Unit 1d & 0.8989 & 0.8796 & 0.8989 & 0.8990\\
 \bottomrule
 \multicolumn{5}{l}{\rule{0pt}{1em}Fuente: elaboración propia, Instituto Nacional de Estadísticas }\\
 \end{tabular}
@@ -1318,17 +1327,17 @@ emb\_gru\_1d & 0.8989 & 0.8796 & 0.8989 & 0.8990\\
 
 \begin{table}[H]
 
-\caption{\label{tab:unnamed-chunk-2}Resultados CIUO 2 dígito}
+\caption{\label{tab:resultados_entrenamiento}Resultados CIUO 2 dígito}
 \centering
 \fontsize{9.5}{11.5}\selectfont
 \begin{tabular}[t]{lrrrr}
 \toprule
 modelo & acc & macro & micro & weighted\\
 \midrule
-seq\_2d & 0.8456 & 0.7249 & 0.8456 & 0.8476\\
-tfidf\_2d & 0.8412 & 0.7355 & 0.8412 & 0.8431\\
-emb\_simple\_2d & 0.8324 & 0.7220 & 0.8324 & 0.8348\\
-emb\_gru\_2d & 0.8526 & 0.7364 & 0.8526 & 0.8543\\
+secuencias feed-forward 2d & 0.8456 & 0.7249 & 0.8456 & 0.8476\\
+TF-IDF feed-forward 2d & 0.8412 & 0.7355 & 0.8412 & 0.8431\\
+embeddings feed-forward 2d & 0.8324 & 0.7220 & 0.8324 & 0.8348\\
+embeddings Gated Recurrent Unit 2d & 0.8526 & 0.7364 & 0.8526 & 0.8543\\
 \bottomrule
 \multicolumn{5}{l}{\rule{0pt}{1em}Fuente: elaboración propia, Instituto Nacional de Estadísticas }\\
 \end{tabular}
@@ -1382,7 +1391,7 @@ retorne un resultado, que también cumple con cierta estructura. En ese
 sentido, la API que se pone a disposición permite que los modelos sean
 utilizados, sin que las y los usuarios cuente con ninguno de los
 requerimientos mencionados más arriba, disminuyendo de manera
-significativa las barreras de entrada.
+significativa las barreras de entrada para su uso.
 
 En ese sentido, desde el punto de vista de un analista, la única
 herramienta que se requiere para poder utilizar los modelos es alguna
@@ -1424,7 +1433,8 @@ certeza.
 \KeywordTok{library}\NormalTok{(httr)}
 \KeywordTok{library}\NormalTok{(feather)}
 \NormalTok{caenes <-}\StringTok{ }\KeywordTok{read_feather}\NormalTok{(}\StringTok{"src/data/split_train_test/test.feather"}\NormalTok{)}
-\NormalTok{request <-}\StringTok{  }\NormalTok{httr}\OperatorTok{::}\KeywordTok{POST}\NormalTok{(}\StringTok{"http://143.198.79.143:8080/predict"}\NormalTok{,}
+
+\NormalTok{request <-}\StringTok{  }\NormalTok{httr}\OperatorTok{::}\KeywordTok{POST}\NormalTok{(}\StringTok{"http://10.91.160.65:9292/predict"}\NormalTok{,}
                  \DataTypeTok{encode =} \StringTok{"json"}\NormalTok{,}
                  \DataTypeTok{body =}  \KeywordTok{list}\NormalTok{(}\DataTypeTok{text =}\NormalTok{ caenes}\OperatorTok{$}\NormalTok{glosa_caenes[}\DecValTok{1}\OperatorTok{:}\DecValTok{10}\NormalTok{],}
                               \DataTypeTok{classification =} \StringTok{"caenes"}\NormalTok{,}
@@ -1477,29 +1487,31 @@ codigo\_int & cod\_final & prob\\
 recomendaciones}\label{conclusiones-y-recomendaciones}}
 
 El presente proyecto ha tenido el objetivo de generar datos de
-entrenamiento y modelos para ser utilizados libremente por la
-institución. En ese sentido, este esfuerzo se enmarca en un camino que
-la institución viene recorriendo desde hace algunos años hacia la
-automatización de procesos de codificación. En este camino, el enfoque
-de \emph{machine learning} ha generado resultados positivos y es de
-esperar que su utilización siga expandiéndose con el paso del tiempo.
-Ahora bien, al mismo tiempo en que se llevan a cabo avances en el campo
-de la inteligencia artificial, surgen nuevos desafíos institucionales,
-que no deben ser soslayados.
+entrenamiento y modelos para ser utilizados por productores de
+estadísticas que utilicen los clasificadores CIUO-08 y CAENES. En ese
+sentido, este esfuerzo se enmarca en un camino que la institución viene
+recorriendo desde hace algunos años hacia la automatización de procesos
+de codificación. El enfoque de \emph{machine learning} ha generado
+resultados positivos y es de esperar que su utilización siga
+expandiéndose con el paso del tiempo. Ahora bien, al mismo tiempo en que
+se llevan a cabo avances en el campo de la inteligencia artificial,
+surgen nuevos desafíos institucionales, que no deben ser soslayados.
 
 \begin{itemize}
 
-  \item En primer lugar, es sumamente importante considerar que la continuidad operativa de los modelos puestos a disposición requiere de un equipo que pueda hacerse cargo del monitoreo y actualizaciones que el sistema requiera. En ese sentido, la Sección de Nomenclaturas surge como la unidad más idónea para llevar a cabo dicha tarea, ya que en ella recae la responsabilidad de implementar los estándares internacionales de los clasificadores a la realidad nacional. Este equipo debiese encargarse de actualizar constantemente los sets de entrenamiento, a partir de las auditorias y/o revisiones realizadas a los productos de la institución. Lo anterior implica poner en marcha un flujo constante, lo cual haría posible una mejora continua de la calidad de los datos. Es importante mencionar que la actualización constante de los sets de entrenamiento no supone un aumento de costos relevante para la institución, ya que al ser las auditorías parte del quehacer cotidiano del INE, se hace necesario únicamente adecuar algunos flujos de trabajo para sacar provecho de un trabajo que los equipos ya están llevando a cabo.  
+  \item En primer lugar, es importante considerar que la continuidad operativa de los modelos puestos a disposición requiere de un equipo que pueda hacerse cargo del monitoreo y actualizaciones que el sistema requiera. En ese sentido, la Sección de Nomenclaturas surge como la unidad más idónea para llevar a cabo dicha tarea, ya que en ella recae la responsabilidad de implementar los estándares internacionales de los clasificadores a la realidad nacional. Este equipo debiese encargarse de actualizar constantemente los sets de entrenamiento, a partir de las auditorias y/o revisiones realizadas a los productos de la institución. Lo anterior implica poner en marcha un flujo constante, lo cual haría posible una mejora continua de la calidad de los datos. Es importante mencionar que la actualización constante de los sets de entrenamiento no supone un aumento de costos relevante para la institución, ya que al ser las auditorías parte del quehacer cotidiano del INE, se hace necesario únicamente adecuar algunos flujos de trabajo para sacar provecho de un trabajo que los equipos ya están llevando a cabo.  
 
   \item A lo largo de este documento se ha mencionado la necesidad de monitoreo constante de los modelos. Tal como se ha señalado antes, una estrategia basada en una revisión manual por parte de analistas especializados es efectiva, sin embargo, conlleva costos elevados. En ese sentido, una estrategia automática de seguimiento constituiría una herramienta útil para mejorar y facilitar la continuidad operativa de los modelos en producción. Esto podría ser pensado como un mecanismo automático, que genere alertas cuando exista probabilidad de que un modelo comience a fallar. 
 
   \item De lo anterior se desprende la necesidad de llevar a cabo nuevos entrenamientos cada vez que sea necesario o cada vez que el aumento de datos haga pensar que es posible mejorar el rendimiento actual de los modelos. Se propone que la responsabilidad de llevar a cabo este trabajo, al igual que el de mantenimiento de los datasets de entrenamiento, recaiga en la Sección de Nomenclaturas. Este equipo es el más indicado para evaluar si un modelo está funcionando adecuadamente e identificar cuáles son las falencias que aquel pueda tener.       
 
-  \item Se ha mencionado que modificaciones abruptas en las metodologías de levantamiento pueden generar una caída relevante en el rendimiento de un algoritmo, ya que podrían alterar la manera en la que los datos son registrados, produciéndose una distancia respecto a los datos que se utilizaron durante el entrenamiento. Ello quiere decir que cada vez que un modelo de clasificación esté en producción, debiese estar presente la preocupación sobre cuáles podrían ser los cambios en la manera en la que los datos son registrados. En ese sentido, una estandarización de las preguntas sobre ocupación y actividad económica aparece como algo de gran importancia. Es posible que debido a las particularidades de algún producto, sea necesario modificar o diminuir la cantidad de preguntas para registar ocupación y/o actividad económica. El costo de ello, además de perder comparabilidad con otros estudios, es limitar severamente la posibilidad de utilizar modelos ya entrenados para una tarea. En ese sentido, de ser posible es altamente recomendable que tanto las baterías como los fraseos de las preguntas se asemejen los más posible al modo en el que actualmente los cuestionarios del INE consultan ocupación y actividad económica.       
+  \item Se ha mencionado que modificaciones abruptas en las metodologías de recolección (ver apartado sobre limitaciones de un método de machine learning) pueden generar una caída relevante en el rendimiento de un algoritmo, ya que podrían alterar la manera en la que los datos son registrados, produciéndose una distancia respecto a los datos que se utilizaron durante el entrenamiento. Ello quiere decir que cada vez que un modelo de clasificación esté en producción, debiese estar presente la preocupación sobre cuáles podrían ser los cambios en la manera en la que los datos son registrados. En ese sentido, una estandarización de las preguntas sobre ocupación y actividad económica aparece como algo relevante. Es posible que debido a las particularidades de algún producto, sea necesario modificar o diminuir la cantidad de preguntas para registar ocupación y/o actividad económica. El costo de ello, además de perder comparabilidad con otros estudios, es limitar la posibilidad de utilizar modelos ya entrenados para una tarea. En ese sentido, de ser posible es recomendable que tanto las baterías como los fraseos de las preguntas se asemejen los más posible al modo en el que actualmente los cuestionarios del INE consultan ocupación y actividad económica. Del mismo modo, la capacitación y las instrucciones durante la recolección debiesen acercarse a los procedimientos actualmente existentes en otros operativos del INE.         
 
-  \item Es importante mencionar que cualquier estrategia basada en *machine learning* debiese considerar una parte de trabajo manual. Los objetivos institucionales imponen la necesidad de velar por un uso eficiente de los recursos, sin embargo, ello no debería comprometer la calidad. Dado que cualquier método de codificación basado en *machine learning* introduce un porcentaje de error, el objetivo debiese ser minimizarlo al menor costo posible. En ese sentido, el etiquetado manual de una fracción de los datos, supone un complemento muy importante en una estrategia mayormente automatizada. Siempre existirán glosas complejas o que simplemente no han estado presentes durante el entrenamiento. Para esos casos particulares, el trabajo manual suele tener resultados mucho mejores que un algoritmo. El desafío consiste, entonces, en discriminar cuáles son las glosas que requieren ser codificadas manualmente. Un camino posible es utilizar la probabilidad de respuesta que entregan los modelos (ver capítulo sobre la puesta en producción) y considerar que dicha variable es un *proxy* de dificultad. Si efectivamente dicha probabilidad da cuenta de la dificultad de codificación de las glosas, es posible ordenarlas de menor a mayor complejidad y establecer un punto de corte que permita separar los registros que serán codificados por un modelo de aquellos que serán revisados por una persona experta.
+  \item Es importante mencionar que cualquier estrategia basada en \textit{machine Learning} debiese considerar una parte de trabajo manual. Los objetivos institucionales imponen la necesidad de velar por un uso eficiente de los recursos, sin embargo, ello no debería comprometer la calidad. Dado que cualquier método de codificación basado en \textit{machine Learning} introduce un porcentaje de error, el objetivo debiese ser minimizarlo cuanto sea posible. En ese sentido, el etiquetado manual de una fracción de los datos, supone un complemento muy importante en una estrategia mayormente automatizada. Siempre existirán glosas complejas o que simplemente no han estado presentes durante el entrenamiento. Para esos casos particulares, el trabajo manual suele tener resultados mucho mejores que un algoritmo. Contar con un porcentaje de glosas codificadas manualmente es útil, además, para mantener actualizados los sets de entrenamiento. El surgimiento de nuevas actividades económicas y ocupaciones puede implicar que las predicciones para dichos casos se tornen complejas, de modo que un etiquetado manual de estos casos contribuye a una actualización constante de los datos de entrenamiento.  
 \newline
-\newline Con el objeto de ejemplificar cómo funciona la estrategia, el siguiente gráfico muestra la relación entre el error de predicción y el porcentaje de registros codificados automáticamente, para lo cual se utilizaron datos de la Encuesta de Presupuestos Familiares. Se puede observar que, como es de esperar, conforme aumenta el porcentaje de codificación manual, disminuye el error de predicción y, lo que es más importante, dicha reducción avanza a tasas decrecientes. Expresado de otro modo, los primeros registros que se codifican manualmente generan un "retorno" importante, el cual va disminuyendo progresivamente conforme avanza el porcentaje de datos codificados manualmente. Esto es un indicio de que el ordenamiento generado a partir del *proxy* de dificutad funciona, ya que si aquel fuese totalmente aleatorio, se observaría una reducción del error, pero dicha reducción no tendría la forma observada en el gráfico.
+\newline El desafío consiste, entonces, en discriminar cuáles son las glosas que requieren ser codificadas manualmente. Un camino posible es utilizar la probabilidad de respuesta que entregan los modelos (ver capítulo sobre la puesta en producción) y considerar que dicha variable es un \textit{proxy} de dificultad. Si efectivamente dicha probabilidad da cuenta de la dificultad de codificación de las glosas, es posible ordenarlas de menor a mayor complejidad y establecer un punto de corte que permita separar los registros que serán codificados por un modelo de aquellos que serán revisados por una persona experta.
+\newline
+\newline Con el objeto de ejemplificar cómo funciona la estrategia, el siguiente gráfico muestra la relación entre el error de predicción y el porcentaje de registros codificados automáticamente, para lo cual se utilizaron datos de la Encuesta de Presupuestos Familiares. Se puede observar que, como es de esperar, conforme aumenta el porcentaje de codificación manual, disminuye el error de predicción y, lo que es más importante, el error de codificación disminuye a tasas decrecientes. Expresado de otro modo, los primeros registros que se codifican manualmente generan un "retorno" importante, el cual va disminuyendo progresivamente conforme avanza el porcentaje de datos codificados manualmente. Esto es un indicio de que el ordenamiento generado a partir del \textit{proxy} de dificutad funciona, ya que si aquel fuese totalmente aleatorio, se observaría una reducción del error, pero dicha reducción no tendría la forma observada en el gráfico.
 \newline
 \newline Una vez construida la relación entre error y codificación manual, es posible escoger un punto de corte, con el objeto de aproximar cuál será el porcentaje de error que introducirá la codificación automática. A partir de la relación descrita se desprende una decisión de costo/beneficio, ya que el error puede ser entendido como una función de los recursos destinados a codificar registros manualmente. Así, codificar automáticamente los primeros registros genera un beneficio importante, pero avanzar hacia un error 0 se torna cada vez más costoso. A raíz de ello podría llegarse a la determinación de tolerar cierto porcentaje de error. En el caso de este ejemplo se seleccionó un porcentaje de codificación de 5%, valor que no debe ser interpretado como una recomendación, sino simplemente como un número arbitrario para mostrar el funcionamiento de la estrategia.         
 
@@ -1514,9 +1526,9 @@ que no deben ser soslayados.
 \end{figure}
 
 
-  \item Finalmente, debe subrayarse que la pertinencia de los métodos de codificación basados en *machine learning* siempre debe ser evaluada a la luz de las necesidades y restricciones de cada operación. Así, para productos que son estables en el tiempo, como las operaciones coyunturales, una estrategia de este tipo resulta de gran utilidad, ya que al no existir modificaciones importantes en la metodología, un mismo entrenamiento puede ser usado muchas veces, lo cual implica un ahorro importante de recursos. Por otro lado, encuestas estructurales pueden no verse tan beneficiadas de un método como este, puesto que debido a la periodicidad con la que se realizan, es altamente probable que entre una versión y otra se produzcan cambios metodológicos importantes, que dejen obsoletos los sets de entrenamiento. Bajo una estrategia de *machine learning*,  dichos cambios obligarían a actualizar los sets de entrenamiento mediante la recodificación manual de un gran número de casos, poniendo en duda su utilidad como método de ahorro de costos. Este tipo de obsolescencia, sin embargo, impacta de forma más directa a las operaciones estadísticas que implementan clasificadores que no se ven afectos a actualización continua, como es el caso del Clasificador de Consumo Individual por Finalidades (CCIF). En el caso de los clasificadores CIUO-08.CL y CAENES, esta actualización es constante.
+  \item La pertinencia de los métodos de codificación basados en \textit{machine Learning} siempre debe ser evaluada a la luz de las necesidades y restricciones de cada operación. Así, para productos que son estables en el tiempo, como las operaciones coyunturales, una estrategia de este tipo resulta de gran utilidad, ya que al no existir modificaciones importantes en la metodología, un mismo entrenamiento puede ser usado muchas veces, lo cual implica un ahorro considerable de recursos. Por otro lado, encuestas estructurales pueden no verse tan beneficiadas de un método como este, puesto que debido a la periodicidad con la que se realizan, es altamente probable que entre una versión y otra se produzcan cambios metodológicos importantes, que dejen obsoletos los sets de entrenamiento. Bajo una estrategia de \textit{machine Learning},  dichos cambios obligarían a actualizar los sets de entrenamiento mediante la recodificación manual de un gran número de casos, poniendo en duda su utilidad como método de ahorro de costos. Este tipo de obsolescencia, sin embargo, impacta de forma más directa a las operaciones estadísticas que implementan clasificadores que no se ven afectos a actualización continua, como es el caso de la Clasificación de Consumo Individual por Finalidades (CCIF). En el caso de los clasificadores CIUO-08.CL y CAENES, esta actualización es constante.
 
- \item Para los Censos de Población y Vivienda se recomienda altamente el uso de metodologías de *machine Learning* para la codificación de ocupación y actividad económica, considerando el tamaño de la operación estadística, el ahorro de costos y la mejora en oportunidad que podría retornar este tipo de estrategia.
+ \item Finalmente, para los Censos de Población y Vivienda se recomienda altamente el uso de metodologías de \textit{machine Learning} para la codificación de ocupación y actividad económica, considerando el tamaño de la operación estadística, el ahorro de costos y la mejora en oportunidad que podría retornar este tipo de estrategia.
 
 \end{itemize}
 
@@ -1536,6 +1548,23 @@ utilizando técnicas de text mining: Aplicación a las glosas de la
 Encuesta Nacional de Empleo (ENE)». Documento de Trabajo.
 \url{https://www.ine.cl/docs/default-source/documentos-de-trabajo/clasificacion-automatica-de-textos-utilizando-tecnicas-de-text-mining-aplicacion-a-las-glosas-de-la-encuesta-nacional-de-empleo.pdf?sfvrsn=1ddfe7d2_2}.
 
+\leavevmode\hypertarget{ref-inbook}{}%
+Feldhans, Robert, Adrian Wilke, Stefan Heindorf, Mohammad Shaker,
+Barbara Hammer, Axel-Cyrille Ngonga Ngomo, y Eyke Hüllermeier. 2021.
+«Drift Detection in Text Data with Document Embeddings». En, 107-18.
+\url{https://doi.org/10.1007/978-3-030-91608-4_11}.
+
+\leavevmode\hypertarget{ref-inproceedings}{}%
+Gama, João, Pedro Medas, Gladys Castillo, y Pedro Rodrigues. 2004.
+«Learning with Drift Detection». En \emph{Intelligent Data Analysis},
+8:286-95. \url{https://doi.org/10.1007/978-3-540-28645-5_29}.
+
+\leavevmode\hypertarget{ref-article}{}%
+Gama, João, Indrė Žliobaitė, Albert Bifet, Mykola Pechenizkiy, y Hamid
+Bouchachia. 2014. «A Survey on Concept Drift Adaptation». \emph{ACM
+Computing Surveys (CSUR)} 46 (abril).
+\url{https://doi.org/10.1145/2523813}.
+
 \leavevmode\hypertarget{ref-ine_caenes}{}%
 INE. 2016. «Clasificador de Actividades Económicas Nacional para
 Encuestas Sociodemográficas». Documento de Trabajo.
@@ -1545,6 +1574,11 @@ Encuestas Sociodemográficas». Documento de Trabajo.
 ---------. 2019. «Sistema de clasificación y codificación automatica en
 la encuesta nacional de empleo». Documento de Trabajo.
 \url{https://www.ine.cl/docs/default-source/ocupacion-y-desocupacion/metodologia/espanol/documento-sistema-de-clasificaci\%C3\%B3n-y-codificaci\%C3\%B3n-autom\%C3\%A1tica-(mayo-2019).pdf?sfvrsn=ceea6423_3}.
+
+\leavevmode\hypertarget{ref-git_hub}{}%
+Perez, J y Cañete, J. 2016. «FastText embeddings from SUC: Word
+embeddings». Documento de Trabajo.
+\url{https://github.com/dccuchile/spanish-word-embeddings}.
 
 \leavevmode\hypertarget{ref-skansi}{}%
 Skansi, S. 2018. \emph{Introduction to Deep Learning. From Logical

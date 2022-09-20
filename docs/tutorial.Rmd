@@ -1,0 +1,114 @@
+---
+title: "Tutorial API"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = F, warning = F)
+```
+
+
+## Introducción
+
+La API para la codificación automática pone a disposición de los usuarios y usuarias modelos a uno y dos dígitos para actividad económica (CAENES) y ocupación (CIUO-08.CL). Los datos de entrenamiento provienen principalmente de la coyuntura de la Encuesta Nacional de Empleo, de modo que los modelos deberían ser utilizados para obtener predicciones de glosas cuya recolección tenga características similares a las utilizadas en el trabajo de campo de dicha encuesta. El etiquetado de datos fue realizado en el marco del proyecto Estratégico Servicios Compartidos para la Producción Estadística.   
+
+En la presente viñeta se muestran algunos ejemplos para interactuar con la API de codificación automática mediante R y python. 
+
+## Predecir glosas individuales
+
+El *endpoint predict* permite obtener el código para una glosa. El parámetro más importante es *text*, donde debe indicarse la glosa para la cual se busca una predicción. Además, se debe precisar el clasificador (ciuo o caenes), así como la cantidad de dígitos (1 o 2). En caso de que no se especifiquen estos últimos 2 parámetros, los valores por defecto serán *caenes* y 2.     
+
+El paquete `httr` provee algunas herramientas para trabajar con el resultado del *request*. Mediante la función `status_code` es posible verificar el estatus de la operación (idealmente 200). Finalmente, con la función `content` se extrae el resultado de la consulta, consistente en un archivo json que indica la categoría predicha y la probabilidad asignada por el modelo a la predicción.   
+
+```{r}
+
+library(httr)
+glosa <- "manipulador de alimentos prepara colaciones"
+
+request <-  httr::POST("http://10.91.160.65:9292/predict", 
+                       encode = "json",
+                       body =  list(text = glosa,
+                                    classification = "ciuo",
+                                    digits = 2)
+)
+
+# Revisar el status
+httr::status_code(request)
+
+# Extraer el contenido
+response <- httr::content(request)
+response
+```
+
+Para obtener el mismo resultado en python es posible utilizar la librería requests. En este caso los parámetros *text*, *classification* y *digits* se entregan mediante un diccionario a la función post.
+
+```{python, eval = F}
+import requests
+ 
+url = "http://10.91.160.65:9292/predict"
+glosa = "gerente de producción dirige equipo"
+
+data = {
+    "text" : glosa,
+    "classification" : "ciuo",
+    "digits" : 2
+}
+ 
+response = requests.post(url, json=data)
+```
+
+
+## Predicción de conjunto de glosas
+
+Para predecir conjuntos de glosas, en lugar de textos individuales, se debe utilizar un procedimiento muy similar al anterior, pero ahora entregando un vector de *strings*. Para ello, se carga un archivo que contiene glosas de actividad económica y entregamos esa información en el parámetro *text*. En este caso, se utilizan las 10 primeras filas y se indica que la clasificación es CAENES a un dígito. 
+
+```{r}
+library(feather)
+library(tidyverse)
+caenes <- read_feather("../src/data/split_train_test/test.feather")
+
+request <-  httr::POST("http://10.91.160.65:9292/predict",
+                       encode = "json",
+                       body =  list(text = caenes$glosa_caenes[1:10],
+                                    classification = "caenes",
+                                    digits = 1)
+)
+
+# Extraer el contenido
+response <- httr::content(request)
+
+# Impimir las dos primeras predicciones
+tabla <- map(response[1:5], as.data.frame) %>%
+  bind_rows()
+
+tabla
+```
+
+
+Para implementar la misma consulta en python, utilizamos el siguiente código.
+
+```{python, eval = F}
+
+import requests
+import pandas as pd
+
+caenes = pd.read_feather("../src/data/split_train_test/test.feather")
+glosa = list(caenes.glosa_caenes[0:10])
+
+url = "http://10.91.160.65:9292/predict"
+
+data = {
+    "text" : glosa,
+    "classification" : "ciuo",
+    "digits" : 2
+}
+ 
+response = requests.post(url, json=data)
+ 
+print("Status Code", response.status_code)
+print("JSON Response ", response.json())
+
+```
+
+
+

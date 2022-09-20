@@ -3,7 +3,7 @@ title: "Untitled"
 output: pdf_document
 ---
 
-
+## título  (\#eq:binom)
 ```{r}
 library(feather)
 library(tidyverse)
@@ -28,6 +28,9 @@ ciuo2 <- ciuo %>%
 ```{r, fig.align='center'}
 footnote <- "Fuente: elaboración propia, Instituto Nacional de Estadísticas "
 
+fn1 = 'Fuente: elaboración propia'
+fn2 = 'Instituto Nacional de Estadísticas'
+
 origen <- ciuo2 %>% 
         filter(missing == "válido") %>% 
         group_by(origen) %>% 
@@ -44,7 +47,8 @@ origen <- ciuo2 %>%
 origen %>% 
   kbl(caption = "Origen de la codificación CIUO-08.CL", booktabs = T)  %>%
   kable_styling( font_size = 9.5 ) %>%
-  footnote(general_title = "", general = footnote, footnote_as_chunk = T) 
+  footnote(general_title = "", general = c(fn1, fn2), footnote_as_chunk = T) 
+
 ```
 
 
