@@ -1,4 +1,5 @@
 .Rproj.user
 .Rproj
 /README_files
-/src/data
+/src/data/
+data/
